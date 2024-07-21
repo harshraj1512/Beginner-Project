@@ -1,0 +1,19 @@
+What is Tailwind CSS ?
+Tailwind Css is like a toolbox for building website. Instead of Writing customer CSS code from scratch, you pick and choose pre-made styles (like "make this text bigger" or " add a blue background") by adding specific words to your HTML code. It makes web development faster and more consistent because you use ready-made building blocks for your website's design.
+
+.............
+Prerequite required for Tailwind CSS ?
+-> Basic HTML Syntax
+-> Box Model (Padding, margin, border)
+-> Flex Box
+-> Grid
+-> Parent and child
+-> Pseudo class and element
+-> media queries
+-> transitions
+-> Position (fixed, absolute, relative)
+-> Hover and many more
+
+.................
+What is Vite ?
+Vite is a tool that helps web developers build websites or web apps faster. It's like a supercharged toolbox for making web projects. Vite is really quick, so it speeds up the process of creating and testing your website as you work on it. It also supports different web technologies like Vue.js and React, making it easier for developers to use their favorite tools. So, it's a helpful tool for making website quickly and effectively.
