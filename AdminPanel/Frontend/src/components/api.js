@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:4001";
+const BASE_URL = "https://adminbackend-f8oq.onrender.com";
 
 export const AllEmployees = async (search = "", page = 1, limit = 5) => {
     const url = `${BASE_URL}/api/employees?search=${search}&page=${page}$limit=${limit}`;
