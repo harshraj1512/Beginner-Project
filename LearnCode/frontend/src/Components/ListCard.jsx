@@ -2,16 +2,39 @@ import React from "react";
 import img from "../Images/code.png";
 import deleteImg from "../Images/delete.png";
 
-const ListCard = () => {
+const ListCard = ({item}) => {
   const [isDeleteModelShow, setisDeleteModelShow] = useState(false);
+  const navigate = useNavigate();
+  
+  const deleteProj = (id) => {
+    fetch(api_base_url + "/users/deleteProject",{
+      mode: "cors",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        projId: id,
+        userId: localStorage.getItem("userId")
+      })
+    }).then(res=>res.json()).then(data=>{
+      if (data.success) {
+        setisDeleteModelShow(false);
+        window.location.reload()
+      } else {
+        alert(data.message);
+        setisDeleteModelShow(false);
+      }
+    })
+  };
   return (
     <>
       <div className="listCard mb-2 w-full flex items-center justify-between p-[10px] bg-[#141414] cursor-pointer rounded-lg hover:bg-[#202020]">
-        <div className="flex items-center gap-2">
+        <div onClick={()=>{navigate(`/editor/${item._id}`)}} className="flex items-center gap-2">
           <img className="w-[80px]" src={img} alt="" />
           <div>
-            <h3 className="text-[20px]">My first Project</h3>
-            <p className="text-gray-500 text-[14px]">Created in 9 mon 2023</p>
+            <h3 className="text-[20px]">{item.title}</h3>
+            <p className="text-gray-500 text-[14px]">Created in {new Date(item.date).toDateString()}</p>
           </div>
         </div>
         <div>
@@ -28,7 +51,7 @@ const ListCard = () => {
             </h3>
 
             <div className="flex w-full mt-5 items-center gap-[10px]">
-              <button className="p-[10px] rounded-lg bg-[#FF4343] text-white cursor-pointer min-w-[49%]">
+              <button onClick={()=>{deleteProj(item._id)}} className="p-[10px] rounded-lg bg-[#FF4343] text-white cursor-pointer min-w-[49%]">
                 Delete
               </button>
               <button onClick={()=>{setisDeleteModelShow(false)}} className="p-[10px] rounded-lg bg-[#1A1919] text-white cursor-pointer min-w-[49%]">
