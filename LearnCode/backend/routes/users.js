@@ -93,6 +93,38 @@ router.post("/deleteProject", async (req, res) => {
   } else {
     return res.json({ success: false, message: "User Not found"});
   }
-})
+});
+
+router.post("/getProject", async (req, res) => {
+  let {userId, projId} = req.body;
+  let user = await userModel.findOne({ _id: userId });
+  if (user) {
+    let project = await projectModel.findOne({ _id: projId });
+    return res.json({ success: true, message: "Project fetched Successfully", project: project });
+  } else {
+    return res.json({ success: false, message: "User not Found!"});
+  }
+});
+
+router.post("/updateProject", async (req, res) => {
+  let { userId, htmlCode, cssCode, jsCode, projId } = req.body;
+  let user = await userModel.findOne({ _id: userId });
+
+  if (user) {
+    let project = await projectModel.findOneAndUpdate(
+      { _id: projId },
+      { htmlCode: htmlCode, cssCode: cssCode, jsCode: jsCode },
+      { new: true } // This option returns the updated document
+    );
+
+    if (project) {
+      return res.json({ success: true, message: "Project updated successfully" });
+    } else {
+      return res.json({ success: false, message: "Project not found!" });
+    }
+  } else {
+    return res.json({ success: false, message: "User not found!" });
+  }
+});
 
 module.exports = router;

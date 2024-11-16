@@ -3,22 +3,29 @@ import EditorNavbar from '../Components/EditorNavbar'
 import Editor from '@monaco-editor/react';
 import { MdLightMode } from "react-icons/md";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import { api_base_url } from '../helper';
+import { useParams } from 'react-router-dom';
 
 
 const Editior = () => {
   const [tab, setTab] = useState("html");
   const [isLightMode, setIsLightMode] = useState(false);
-  const [isExpanded, setISExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [htmlCode, setHtmlCode] = useState("<h1>Hello world</h1>");
   const [cssCode, setCssCode] = useState("body { background-color: #f4f4f4; }");
   const [jsCode, setJsCode] = useState("// some comment");
+
+  // Extract projectID from URL using useParams
+  const { projectID } = useParams();
+
   const changeTheme = () => {
+    const editorNavbar = document.querySelector(".EditiorNavbar");
     if (isLightMode) {
-      document.querySelector(".EditiorNavbar").style.background = "#141414";
+      editorNavbar.style.background = "#141414";
       document.body.classList.remove("lightMode");
       setIsLightMode(false);
     } else {
-      document.querySelector(".EditiorNavbar").style.background = "#f4f4f4";
+      editorNavbar.style.background = "#f4f4f4";
       document.body.classList.add("lightMode");
       setIsLightMode(true);
     }
@@ -41,9 +48,73 @@ const Editior = () => {
     }, 200);
   }, [htmlCode, cssCode, jsCode]);
 
+  useEffect(() => {
+    fetch(api_base_url + "/getProject", {
+      mode: "cors",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        userId: localStorage.getItem("userId"),
+        projId: projectID // Use projectID here
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setHtmlCode(data.project.htmlCode);
+        setCssCode(data.project.cssCode);
+        setJsCode(data.project.jsCode);
+      });
+  }, [projectID]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault(); // Prevent the default save file dialog
+  
+        // Ensure that projectID and code states are updated and passed to the fetch request
+        fetch(api_base_url + "/updateProject", {
+          mode: "cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem("userId"),
+            projId: projectID,  // Make sure projectID is correct
+            htmlCode: htmlCode,  // Passing the current HTML code
+            cssCode: cssCode,    // Passing the current CSS code
+            jsCode: jsCode       // Passing the current JS code
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("Project saved successfully");
+          } else {
+            alert("Something went wrong");
+          }
+        })
+        .catch((err) => {
+          console.error("Error saving project:", err);
+          alert("Failed to save project. Please try again.");
+        });
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [projectID, htmlCode, cssCode, jsCode]);
+
+
   return (
     <>
-      <EditorNavbar />
+      <EditiorNavbar />
       <div className="flex">
         <div className={`left w-[${isExpanded ? "100%" : "50%"}]`}>
           <div className="tabs flex items-center justify-between gap-2 w-full bg-[#1A1919] h-[50px] px-[40px]">
@@ -55,7 +126,7 @@ const Editior = () => {
 
             <div className="flex items-center gap-2">
               <i className="text-[20px] cursor-pointer" onClick={changeTheme}><MdLightMode /></i>
-              <i className="text-[20px] cursor-pointer" onClick={() => { setISExpanded(!isExpanded); }}><AiOutlineExpandAlt /></i>
+              <i className="text-[20px] cursor-pointer" onClick={() => { setIsExpanded(!isExpanded); }}><AiOutlineExpandAlt /></i>
             </div>
           </div>
 
@@ -104,7 +175,7 @@ const Editior = () => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Editior
+export default Editior;
