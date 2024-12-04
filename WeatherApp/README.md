@@ -36,7 +36,7 @@ Ensure you have the following installed:
 - An [OpenWeatherMap API Key](https://openweathermap.org/).
 
 ### Demo
-[Watch Demo Video]https://github.com/user-attachments/assets/c8383bb8-b471-4eb3-af44-f4307e1cef3a
+[Watch Demo Video](https://github.com/user-attachments/assets/c8383bb8-b471-4eb3-af44-f4307e1cef3a)
 
 
 
